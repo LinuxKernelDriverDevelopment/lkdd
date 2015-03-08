@@ -1,0 +1,515 @@
+\section{Anforderungsanalyse}
+\label{sec:requirement_anaylse}
+
+Ziel der Arbeit ist es, Unterrichtsmaterial über den Linux-Kernel zu erstellen, welches die Dozenten im Unterricht
+für das Informatikstudium verwenden können. Um die Arbeit möglichst vielseitig einsetzbar zu gestalten,
+wurde mit den Dozenten B. Seeliger, M. Thaler und K. Brodowsky eine Anforderungsanalyse durchgeführt.
+
+\subsection{Ideensammlung}
+\label{subsec:freq}
+
+\begin{table}[h!]
+\begin{center}
+   \scriptsize
+   \begin{tabular}{| p{4cm} | p{11cm} |} \hline
+      \textbf{Idee}        & \textbf{Beschreibung} \\ \hline
+      Themen                      
+      & Die Arbeit soll folgende Themen beinhalten: 
+      \begin{itemize}[noitemsep,nolistsep]
+         \item Grundlagen des Kernel
+         \item Bootprozesse
+         \item Virtual File System (VFS)
+         \item Kernel Driver Model Framework
+         \item System Call Interface
+         \item Device Driver
+         \item USB
+      \end{itemize}
+      \\ \hline
+
+      Skript
+      & Die Arbeit soll ein Skript beinhalten, welches den Studenten die Theorie vermittelt. \newline
+      \\ \hline
+
+      Slides
+      & Die Arbeit soll eine Sammlung von Slides beinhalten, die den Studenten die Theorie vermittelt. \newline
+      \\ \hline
+
+      Übungen
+      & Die Arbeit soll eine Sammlung von Übungen beinhalten, die den Studenten die Praxis vermittelt. \newline
+      \\ \hline
+
+      Musterlösung
+      & Die Arbeit soll eine Sammlung von Musterlösungen beinhalten, die dem Dozent als Vorlage zur Bewertung der Übungen dient. \newline
+      \\ \hline
+
+      Installationsanleitung
+      & Die Arbeit soll eine Installationsanleitung beinhalten, die zeigt wie die Übungen zu verwenden sind. \newline
+      \\ \hline
+
+      Unterstützte Plattformen
+      & Die Übungen sollen auf folgenden Plattformen durchführbar sein: Microsoft Windows, Apple OSX und Linux \newline
+      \\ \hline
+
+      Sprache
+      & Die Arbeit soll in Deutsch oder Englisch verfasst werden. \newline
+      \\ \hline
+
+      Toolempfehlung
+      & Die Arbeit soll eine Empfehlung von Tools beinhalten, von denen in dieser Arbeit Gebrauch gemacht wird. \newline
+      \\ \hline
+
+      Wiederherstellung
+      & Es soll eine Möglichkeit geben ein zerschossenes Image mit kleinem Zeitaufwand wiederherzustellen. \newline
+      \\ \hline
+
+      Kompatibilität              & Die Übungen sollen ohne Anpassungen in zukünftigen Lektionen durchführbar sein. \newline \\ \hline
+      Aktualität                  & Die Arbeit soll auch in 5 Jahren noch relevant sein. \newline \\ \hline
+      Erweiterbarkeit             & Die Arbeit soll für die Dozenten anpassbar und erweiterbar sein. \newline \\ \hline
+   \end{tabular}
+\end{center}
+   \caption[Brainstorming]{Ideen aus dem Brainstorming}
+\end{table}
+
+
+\subsection{Rollen}
+
+Aufgrund dieser Ideen wurden die User-Storys herausgearbeitet.
+Die User-Storys sind nach den Gruppen Administration, Konzeption, Skript und Fallstudie geordnet. \\ 
+
+Jede User-Story definiert für den Aktor einen Wert. Das heisst, es gibt verschiedene Aktoren, welche an unterschiedlichen
+User-Storys ein Interesse haben. Die Aktoren wurden analysiert und in die nachfolgenden Rollen aufgeteilt.
+
+\begin{description}
+   \item[Student]
+      Der Student und die Studentin sind definiert als die Besucher des Unterrichts. Sie haben ein Interessse am Kern dieser
+      Arbeit. Die Stundierenden gewinnen neue Informationen über den Linux-Kernel und können diese anhand der Fallstudien auch in
+      der Praxis umsetzen.  
+   \item[Auftraggeber]
+      Der Auftraggeber bzw. die Auftraggeber haben ein Interesse an der erfolgreichen Durchführung der Arbeit. Das Umfasst die
+      Dozenten als auch im weiteren Sinne die Schulleitung. Inbesondere ist Ihnen die richtige Arbeitsmethodik und die Konzeption
+      wichtig.
+   \item[Autor]
+      Der Autor dieser Arbeit setzt Aufgaben um, die für die beiden zuvor genannten Rollen keinen direkten Nutzen haben, aber für
+      die vollständige Lernzielerfüllung grundlegend sind. Es ist somit im Interesse des Autors diese Ordnungsgemäss umzusetzen.
+\end{description}
+
+\subsection{Definition of Done}
+\label{subsec:dod}
+Die \emph{Definition of Done}\index{Definition of Done} definiert eine Checkliste,
+wann eine User-Story als abgeschlossen bezechnet werden kann. Für diese Arbeit wurde
+die Checkliste in Tabelle \ref{tab:dod} verwendet.
+
+
+\begin{table}[h!]
+\begin{center}
+   \small
+   \begin{tabular}{| p{0.5cm} | p{8cm} |} \hline
+      \includegraphics{images/checkbox} & \textbf{Code ist funktionsfähig} \\ \hline
+      \includegraphics{images/checkbox} & \hspace{0.5cm} Code entspricht \emph{Linux kernel coding style} \\ \hline
+      \includegraphics{images/checkbox} & \hspace{0.5cm} Code kompiliert \\ \hline
+      \includegraphics{images/checkbox} & \hspace{0.5cm} Code lässt sich ausführen \\ \hline
+
+      \includegraphics{images/checkbox} & \textbf{Dokumentation ist vollständig} \\ \hline
+      \includegraphics{images/checkbox} & \hspace{0.5cm} LateX kompiliert \\ \hline
+      \includegraphics{images/checkbox} & \hspace{0.5cm} Formattierung ist korrekt \\ \hline
+      \includegraphics{images/checkbox} & \hspace{0.5cm} Inhalt  \\ \hline
+
+      \includegraphics{images/checkbox} & \textbf{Reviewed} \\ \hline
+      \includegraphics{images/checkbox} & \hspace{0.5cm} Arbeit ist digital eingereicht \\ \hline
+      \includegraphics{images/checkbox} & \hspace{0.5cm} Arbeit steht unter freien Lizenz \\ \hline
+      \includegraphics{images/checkbox} & \hspace{0.5cm} Abnahme ist erfolgt \\ \hline
+   \end{tabular}
+   \caption[Definition of Done - Checkliste]{Checkliste}
+   \label{tab:dod}
+\end{center}
+\end{table}
+
+
+\subsection{Kanban-Board}
+
+Für diese Arbeit wurden diese fünf Spalten definiert:
+\\
+\begin{description}
+   \item[Backlog]
+      Das \emph{Backlog} beinhaltet alle User-Storys, die nicht für den aktuellen Release geplant sind. Falls ein
+      Release früher abgearbeitet ist, können aus dem Backlog weitere User-Storys entnommen werden.
+   \item[Open]
+      In \emph{Open} sind alle für den aktuellen Release geplant User-Storys enthalten.
+   \item[In Progress (2)]
+      Sobald die Arbeit an einer User-Story beginnt, wird sie in die Spalte \emph{In Progress} verschoben. Für diese Spalte
+      ist ein Work-In-Progress von zwei definiert. \index{Work-In-Progress (WIP)} Es können folglich nur zwei
+      User-Storys parallel bearbeitet werden.
+   \item[Implemented (5)]
+      Nach Abschluss einer User-Story wird diese in \emph{Implemented} verschoben. Dafür müssen die Akzeptanztests der
+      User-Story erfolgreich sein. \index{Akzeptanztest} Ist das Limit von fünf Story-Cards erreicht, muss ein 
+      Review erfolgen.
+   \item[Done]
+      Das Review erfolgt in einem kurzen Gespräch mit der Betreuungsperson und stellt den erfolgreichen Abschluss fest.
+      Ein Review muss erst erfolgen wenn die WIP-Limite von \emph{Implemented} erreicht wurde. Die User-Story muss die
+      \emph{Definition of Done} aus Abschnitt \ref{subsec:dod} erfüllen.
+\end{description}
+
+\subsection{Backlog}
+
+Im Backlog sind die Story-Cards mit Identifikation, Story, Akzeptanztest und Schätzung beschrieben.
+Die Story-Cards werden anschliessend auf das Kanban-Board verteilt. \\
+
+\begin{description}[leftmargin=5cm]
+
+   \item[Ablauf]
+   Am Ende eines Releases wird ein Meeting mit dem Auftraggeber vereinbart und eine Abnahme des Releases gemacht.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/ablauf}
+      \end{center}
+      %\caption[Feature - Ablauf]{}
+   \end{figure}
+
+   \clearpage
+   \item[Formelles]
+   User-Storys rund um die Arbeit.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/formelles}
+      \end{center}
+      %\caption[Feature - Formelles]{}
+   \end{figure}
+
+   \item[Hilfestellung]
+   Hilfestellungen um die Verwendeung der Arbeit zu erleichtern.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/hilfestellung}
+      \end{center}
+      %\caption[Feature - Hilfestellung]{}
+   \end{figure}
+
+
+\newpage
+   \item[Analyse]
+   Voranalyse zur Klärung der Anfordernung, Marktüberblick und Umsetzungsvarianten.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/analyse}
+      \end{center}
+      %\caption[Feature - Analyse]{}
+   \end{figure}
+
+
+   \item[Grundlagen]
+   Dieses Feature erklärt die Grundlagen des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/grundlagen}
+      \end{center}
+      %\caption[Feature - Grundlagen]{}
+   \end{figure}
+
+   \clearpage
+   \item[Bootprozess]
+   Dieses Feature erklärt den Bootprzoess des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/bootprozesse}
+      \end{center}
+      %\caption[Feature - Bootprozess]{}
+   \end{figure}
+
+   \item[Virtual-Filesystem]
+   Dieses Feature erklärt das virtuelle Dateisystem des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/vfs}
+      \end{center}
+      %\caption[Feature - VFS]{}
+   \end{figure}
+
+   \item[Kernel-Modell]
+   Dieses Feature erklärt das Modell des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/modell}
+      \end{center}
+      %\caption[Feature - Modell]{}
+   \end{figure}
+
+   \clearpage
+   \item[Syscall]
+   Dieses Feature erklärt das System-Call-Interface des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/syscall}
+      \end{center}
+      %\caption[Feature - Syscall]{}
+   \end{figure}
+
+   \item[Char-Driver]
+   Dieses Feature erklärt die Char-Drivers des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/char}
+      \end{center}
+      %\caption[Feature - Char-Driver]{}
+   \end{figure}
+
+   \item[Block-Driver]
+   Dieses Feature erklärt die Block-Drivers des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/block}
+      \end{center}
+      %\caption[Feature - Block]{}
+   \end{figure}
+
+   \clearpage
+   \item[Network-Driver]
+   Dieses Feature erklärt die Network-Drivers des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/network}
+      \end{center}
+      %\caption[Feature - Network]{}
+   \end{figure}
+
+   \item[USB-Driver]
+   Dieses Feature erklärt die USB-Drivers des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/usb}
+      \end{center}
+      %\caption[Feature - USB-Driver]{}
+   \end{figure}
+
+   \item[USB-Input-Driver]
+   Dieses Feature erklärt die USB-Input-Drivers des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/usbinput}
+      \end{center}
+      %\caption[Feature - USB-Input-Driver]{}
+   \end{figure}
+\newpage
+
+   \item[USB-Storage-Driver]
+   Dieses Feature erklärt die USB-Storage-Drivers des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/usbstorage}
+      \end{center}
+      %\caption[Feature - USB-Storage-Driver]{}
+   \end{figure}
+
+   \item[USB-Network-Driver]
+   Dieses Feature erklärt die USB-Network-Drivers des Linux-Kernels.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/usbnet}
+      \end{center}
+      %\caption[Feature - USB-Network-Driver]{}
+   \end{figure}
+
+
+   \item[Device-Driver]
+   Dieses Feature wurde in Release 3 eingeführt und kombiniert die Char-, Block- und Network-Driver.
+   \begin{figure}[h!]
+      \begin{center}
+         \includegraphics{images/features/devicedriver}
+      \end{center}
+   \end{figure}
+
+\end{description}
+
+
+%\newgeometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+%\begin{landscape}
+
+%\begin{figure}[h!]
+%	\begin{center}
+%		\includegraphics{images/storycard_overview}
+%	\end{center}
+%   \caption[User-Storys]{Alle User-Storys im Überblick}
+%   \label{fig:storycard_overview}
+%\end{figure}
+
+%\end{landscape}
+%\restoregeometry
+
+\newgeometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+\begin{landscape}
+
+\subsection{Kanban-Board - Release 0}
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics{images/kanban_board_r0}
+	\end{center}
+   \caption[Kanban-Board - Release 0]{Kanban-Board vor Release 0}
+   \label{fig:kanban_r0}
+\end{figure}
+
+
+\end{landscape}
+\restoregeometry
+
+\subsubsection{Reflexion - Release 0}
+
+Der Release 0 dauerte länger als in der Konzeptionsphase geplant war. Das Problem war, dass die Anforderungen als \keyword[Use-Case]{Use-Cases} vorlagen
+und ich als Arbeitsmethode ein reduziertes Scrum einsetzten wollte. Nach intensiven Gesprächen mit B. Seeliger hat sich herauskristallisiert, dass dies
+keine gute Idee ist. Ich habe mich deshalb in verschiedene Projektmanagementmethoden eingelesen und mich nach Rücksprache mit B. Seeliger für Kanban
+entschieden. Da für mich Kanban neu war, musste ich dafür mehr Zeit einrechnen. Die Anforderungen wurden von den Use-Cases in die Story-Cards überführt
+und auf dem Kanban-Board platziert. Sehr interessant für mich waren auch die Gespräche mit den Dozenten
+K. Brodowsky und M. Thaler, welche ich im Laufe der Anforderungsanalyse durchgeführt habe. \\
+
+
+\begin{figure}[h!]
+   \begin{center}
+      \includegraphics{images/burndown_r0}
+   \end{center}
+   \caption{Burndown - Release 0}
+\end{figure}
+
+
+
+\newgeometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+\begin{landscape}
+
+\subsection{Kanban-Board - Release 1}
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics{images/kanban_board_r1}
+	\end{center}
+   \caption[Kanban-Board - Release 1]{Kanban-Board vor Release 1}
+   \label{fig:kanban_r1}
+\end{figure}
+
+\end{landscape}
+\restoregeometry
+
+\subsubsection{Reflexion - Release 1}
+
+In Release 1 wurde im Plannig-Meeting die Story-Card \emph{Umsetzungsanalyse} fallen gelassen, da sich keine sinnvolle Evaluation finden liess. Dadurch konnte auch wieder
+etwas Zeit eingeholt werden, die im Release 0 eingesetzt wurde. In diesem Release konnte ich den Linux-Kernel erforschen und die ersten Kapitel schreiben.
+Zum Ende des Releases wurde bemerkt, dass es besser wäre, die Story-Card \emph{Virtuelles Image} vorzuziehen. Denn die Fallstudien konnten nur mit diesem Image getestet werden.
+Aus diesem Grund wurde die Story-Card in den Release 1 aufgenommen. Das hatte zur Folge, dass das Kapitel \emph{Bootprozess} nicht fertig wurde und deshalb in den nächsten
+Release übernommen wurde. \\
+
+\begin{figure}[h!]
+   \begin{center}
+      \includegraphics{images/burndown_r1}
+   \end{center}
+   \caption{Burndown - Release 1}
+\end{figure}
+
+
+\newgeometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+\begin{landscape}
+
+\subsection{Kanban-Board - Release 2}
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics{images/kanban_board_r2}
+	\end{center}
+   \caption[Kanban-Board - Release 2]{Kanban-Board vor Release 2}
+   \label{fig:kanban_r2}
+\end{figure}
+
+\end{landscape}
+\restoregeometry
+
+\subsubsection{Reflexion - Release 2}
+
+Im Relase 2 wurde bemerkbar, dass die Kapitel viel mehr Zeit in Anspruchen nehmen werden als gedacht. Es war klar, dass das hochgesteckte Ziel von zwölf Kapiteln
+nicht erreicht werden kann und dass die Planung überdenkt werden muss. Hauptgrund dafür war, dass die Kaptiel zu Beginn mit zwei bis drei Seiten geplant waren. Um das Thema
+jedoch umfassend zu beleuchten ist das nicht ausreichend. Die Kapitel haben im Durchschnitt acht Seiten. Zudem war von Anfang an klar, dass die Qualität eine wichtigere Rolle spielt als
+die Quantität. Um den Fokus der Arbeit weiterhin auf der Praxis zu halten, wurde in diesem Release das theoretische Kapitel \emph{Kernel Driver Model} fallen gelassen. \\
+
+\begin{figure}[h!]
+   \begin{center}
+      \includegraphics{images/burndown_r2}
+   \end{center}
+   \caption{Burndown - Release 2}
+\end{figure}
+
+
+\newgeometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+\begin{landscape}
+
+
+\subsection{Kanban-Board - Release 3}
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics{images/kanban_board_r3}
+	\end{center}
+   \caption[Kanban-Board - Release 3]{Kanban-Board vor Release 3}
+   \label{fig:kanban_r3}
+\end{figure}
+
+\end{landscape}
+\restoregeometry
+
+\subsubsection{Reflexion - Release 3}
+
+Im letzen Release war noch Zeit für ein letztes Kapitel. Die restliche Zeit sollte für die Toolempfehlung, Installationsanleitung, Korrekturlesen und die Abgabe freigehalten werden. Das fand ich
+schade, denn somit würden die Block und Network Driver nicht mehr behandelt werden. Während des Schreibens am Kapitel \emph{Char Device Driver} fand ich heraus, dass über die einfachste
+Art von Treibern kein achtseitiges Kapitel geschrieben werden kann. Kurzerhand habe ich mit B. Seeliger Kontakt aufgenommen und vorgeschlagen, alle drei Treiberarten in einem Kapitel abzuhandeln.
+Dadurch entstanden die neuen Story-Cards \emph{Skript Device Driver} und \emph{Fallstudie Device Driver}. Diese Änderung empfand ich als gute Abrundung der Thematik, zudem entsteht ein roter
+Faden durch alle Kapitel. \\
+
+\begin{figure}[h!]
+   \begin{center}
+      \includegraphics{images/burndown_r3}
+   \end{center}
+   \caption{Burndown - Release 3}
+\end{figure}
+
+\newgeometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+\begin{landscape}
+
+
+\subsection{Kanban-Board - Endzustand}
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics{images/kanban_board_r4}
+	\end{center}
+   \caption[Kanban-Board - Endzustand]{Kanban-Board zum Zeitpunkt der Abgabe}
+   \label{fig:kanban_r4}
+\end{figure}
+
+
+
+
+
+
+
+\end{landscape}
+\restoregeometry
+
+
+\subsection{Fazit}
+
+Besonders stolz bin auf die Auswahl der Themen und den Spagat zwischen den unterschiedlichen Niveaus, welche die Studenten mitbringen. Ich denke, als Anfänger
+wie auch als Linux-Experte ist es für alle möglich von dieser Arbeit zu profitieren. Für mich persönlich sehe ich folgende Punkte als die grössten Herausforderungen in dieser Arbeit: Kanban als neue
+Projektmethodik, die Einarbeitung in den Source-Code von Linux und das Wiedergeben der Informationen in geeigneter Form. \\
+
+Als ich die ersten Informationen über Kanban gelesen habe, wurde ich neugierig. Obwohl ich eigentlich nie besonders interessiert an Projektmanagement war und ich auch bereits \keyword{Srum} kannte.
+Trotzdem war gerade Kanban für mich äussert wertvoll. Die leichte Art Anforderungen zu erfassen, die aussagekräftige Visualisierung von offener, abgeschlossener und sich in Bearbeitung befindender Arbeit
+und die schnelle Reaktionszeit auf Veränderungen haben es mir angetan. Kanban wurde in dieser Arbeit gelebt. Das sieht man besonders gut an den vielen Veränderungen über die Releases hinweg und an
+den vielen Rücksprachen, die ich mit B. Seeliger geführt habe. \\
+
+Eine ganz andere Herausforderung erwartete mich beim Linux-Kernel. Viele Dokumentationen sind nicht mit der Zeit gegangen und hoffnugslos veraltet. Gerade mit dem Linux-Kernel ist es schwer, Schritt zu halten,
+da er jede Minute mehrere Updates erfährt. Anfangs investierte ich viel Zeit in die Suche nach aktuellen Dokumentationen. Irgendwann habe ich dann aber begonnen den Source-Code selbst zu durchwühlen und fand dies bald darauf
+einfacher und effizienter. Keine Dokumentation ist so aktuell wie der Kernel-Code selbst. Dafür muss man sich Zeit nehmen und sich in den Millionen von Zeilen Source-Code zurecht zu finden, anstatt per Dokumentation
+alles auf dem Serviertablett geliefert zu bekommen. Wer hier nicht fit in C ist, wird schnell die Hände verwerfen. Der Linux-Kernel verwendet nämlich haufenweise GCC-Erweiterungen, Gotos und C-Macros. Da mich das Projekt
+jedoch von Beginn an fasiziert hat, habe ich nicht aufgegeben und mich stundenlang durch die Funktionsaufrufe gearbeitet. Der Linux-Kernel ist für mich nun definitiv keine \emph{Blackbox} mehr und ich überlege mir in Zukunft auch selber aktiv
+mitzuwirken. \\
+
+Nicht nur methodisch und technisch wurde ich gefordert, sondern auch didaktisch. Für mich war es das erste Mal, dass ich im grösseren Rahmen Informationen und Aufgaben für Studenten aufbereitet habe. Es war für mich
+nicht leicht, die Fülle an Informationen zu reduzieren und verständlich wiederzugeben. Oft wird man dazu verleitet, alles gelernte aufzuschreiben und so eine Aneinaderreihung von Fachbergiffen zu produzieren. Ich musste
+mich auf die wesentlichen Dinge konzentieren und ein gutes Konzept erarbeiten. Ich denke, das ist mir gut gelungen und ich bin gespannt wie es die Studentinnen und Studenten aufnehmen werden. Schliesslich bildet diese Arbeit kein
+abgeschlossenes Werk, sondern soll sich durch die Dozenten und Studenten entfalten und laufend um neue Ideen ergänzt werden.
+
+

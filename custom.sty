@@ -1,0 +1,112 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{custom}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PACKAGES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% encoding
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+%	page borders
+\usepackage[a4paper, left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
+
+% header / footer
+\usepackage{scrpage2}
+\pagestyle{scrheadings}
+\automark[chapter]{section}
+\ihead{\headmark}
+\chead{}
+\ifoot{Roger Knecht}
+\cfoot{}
+\ofoot{\pagemark}
+
+% font
+\usepackage[sc]{mathpazo}
+
+% linespaceing
+\usepackage[singlespacing]{setspace}
+
+% hyphenation
+\usepackage[ngerman]{babel}
+
+% quotes
+\usepackage[babel,german=swiss]{csquotes}
+\expandafter\def\expandafter\quote\expandafter{\quote\small}	% make quotes smaller
+
+% graphics
+\usepackage{graphicx}
+
+% figure
+\usepackage{wrapfig}
+
+% tables
+\usepackage{longtable}
+
+%	hyperlinks
+\usepackage{hyperref}
+\hypersetup{colorlinks, citecolor=black, filecolor=black, linkcolor=black, urlcolor=black}
+
+%	pdf includes
+\usepackage{pdfpages}
+
+% math
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% paragraph
+\setlength{\parindent}{0pt}%
+
+% index
+\usepackage{makeidx}
+\makeindex
+\usepackage{idxlayout}
+
+% enumaration
+\usepackage{enumitem}
+\setlist[itemize]{itemsep={0.01cm}}
+\setlist[enumerate]{itemsep={0.01cm}}
+\newcommand\addcolon[1]{#1:}
+\setlist[description]{format=\addcolon, style=multiline,leftmargin=4cm}
+
+% listings
+\usepackage{color}	% for source code listings
+\usepackage{xcolor}	% for source code listings
+\usepackage{listings}	% source code
+\lstset{language=C, numbers=none, showspaces=false, showstringspaces=false, tabsize=2, breaklines=true, basicstyle=\footnotesize\ttfamily}
+\usepackage{caption}	% captions
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\lstset{escapeinside={<@}{@>}}
+
+% landscape
+\usepackage{pdflscape}
+
+% boxes
+\usepackage{fancyvrb}
+
+% if/then/else
+\usepackage{ifthen}
+\usepackage{xifthen}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COMMANDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% keyword
+\newcommand{\keyword}[2][]{\ifthenelse{\isempty{#1}}{\index{#2}\emph{#2}}{\index{#1}\emph{#2}}}
+
+% summary
+\newcommand{\summary}[1]{
+   \colorbox[gray]{0.90}{
+      \parbox{\textwidth}{
+         \begin{center}
+            \parbox{\textwidth}{#1}
+         \end{center}
+      }
+   }
+}
+
+\endinput

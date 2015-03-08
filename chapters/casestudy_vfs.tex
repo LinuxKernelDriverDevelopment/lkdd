@@ -1,0 +1,222 @@
+\section{Fallstudie VFS}
+
+\subsection{Eintrag im \emph{procfs}}
+
+In folgenden Übung soll eine virtuelle Datei im procfs erstellt werden. Entwickeln Sie hierfür ein Kernel-Modul,
+welches einen Eintrag unter \emph{/proc/hello} erzeugt. \\
+
+\begin{enumerate}
+   \item Übernehmen Sie im ersten Schritt das \emph{main.c} und \emph{Makefile} von der \emph{Fallstudie Grundlagen}. 
+   \item Ändern Sie den Namen im Makefile zu \emph{vfs\_proc}. 
+   \item Fügen Sie die Headerdatei für das \emph{procfs} hinzu:
+\begin{lstlisting}
+#include <linux/proc_fs.h>
+\end{lstlisting}
+\end{enumerate}
+
+\subsubsection{Datei erstellen}
+
+Hier sind die zwei für uns relevanten Funktionen des \emph{procfs}:
+\begin{lstlisting}
+proc_dir_entry* proc_create(
+         const char *name, 
+         mode_t mode, 
+         struct proc_dir_entry *parent, 
+         const struct file_operations *proc_fops)
+
+void remove_proc_entry(const char *name, struct proc_dir_entry *parent);
+\end{lstlisting}
+
+Die erste Funktion fügt eine Datei hinzu und die zweite entfernen den Eintrag. \emph{name} entspricht dem Dateinamen,
+\emph{mode} definiert die Zugriffsrechte, \emph{parent} zeigt auf den Eintrag an dem die Datei angehängt werden soll
+und mit \emph{fops} kann man die Dateioperationen angeben. \\
+
+Wir rufen nun die \emph{proc\_create()} während der Modulinitialisierung auf und löschen den Eintrag in der Exit-Funktion.
+\begin{lstlisting}
+static int __init vfs_proc_init (void)
+{
+        hello_file = proc_create(NAME, MODE, NULL, &hello_fops);
+        if (!hello_file) {
+                return -ENOMEM; // not enough memory
+        }
+
+        printk(KERN_INFO "vfs_proc: init\n");
+        return 0;
+}
+
+static void __exit vfs_proc_exit (void)
+{
+        if (hello_file) {
+                remove_proc_entry(NAME, NULL);
+        }
+
+        printk(KERN_INFO "vfs_proc: exit\n");
+}
+
+module_init(vfs_proc_init);
+module_exit(vfs_proc_exit);
+\end{lstlisting} 
+
+Wenn wir \emph{NULL} bei \emph{parent} übergeben, wird die Datei direkt unter \emph{/proc} erzeugt.
+\emph{NAME} und \emph{MODE} definieren wir über \emph{\#define}. Der Pointer \emph{hello\_file} ist der Dateieintrag.
+\begin{lstlisting}
+#define NAME    "hello"
+#define MODE    0666    // read+write access to user, group, others
+
+static struct proc_dir_entry *hello_file;
+\end{lstlisting}
+
+Als nächstes müssen wir die Dateioperationen \emph{hello\_fops} definieren. Der Linux-Kernel macht das über eine Struktur
+namens \emph{file\_operations}, welche eine Reihe von \emph{Callback}-Funktionen beinhaltet. Der Struktur übergeben wir
+unsere eigenen Callback-Funktionen: \emph{hello\_open()}, \emph{hello\_release()}, \emph{hello\_read()} und \emph{hello\_write()}.
+Kopieren Sie diese Struktur \textbf{vor} die Init-Funtkion.
+
+\begin{lstlisting}
+// callbacks for file operations
+static const struct file_operations hello_fops = {
+        .owner   = THIS_MODULE,     // pointer to module
+        .open    = hello_open,      // callback for open()
+        .release = hello_release,   // callback for close()
+        .read    = hello_read,      // callback for read()
+        .write   = hello_write,     // callback for write()
+};
+\end{lstlisting}
+
+Die Callback-Funktionen belassen wir zunächst sehr einfach:
+\begin{lstlisting}
+// gets called on file open
+static int hello_open(struct inode *inode, struct file *file)
+{
+        printk(KERN_INFO "hello: open\n");
+        return 0;
+}
+
+// gets called on file close
+static int hello_release(struct inode *inode, struct file *file)
+{
+        printk(KERN_INFO "hello: close\n");
+        return 0;
+}
+
+// gets called on file read
+static ssize_t hello_read(struct file* file, char __user* buf, size_t buf_size, loff_t* offset)
+{
+        printk(KERN_INFO "hello: read\n");
+        return 0;
+}
+
+// gets called on file write
+static ssize_t hello_write(struct file* file, const char __user* buf, size_t buf_size, loff_t* offset)
+{
+        printk(KERN_INFO "hello: write\n");
+        return buf_size;
+}
+\end{lstlisting}
+
+Speichern Sie nun die \emph{main.c} Datei, kompilieren Sie das Programm über \emph{make} und laden Sie das Modul über
+\emph{insmod}:
+\begin{lstlisting}
+$ make
+make -C /lib/modules/3.2.57/build M=/home/tux/workspace/vfs/procfs modules
+make[1]: Entering directory
+  Building modules, stage 2.
+  MODPOST 1 modules
+make[1]: Leaving directory
+$ sudo insmod vfs_proc.ko
+\end{lstlisting}
+
+Mit \emph{rmmod} können Sie das Modul wieder entladen.
+\begin{lstlisting}
+$ rmmod vfs_proc
+\end{lstlisting}
+\clearpage
+Was passiert bei \emph{ls -l /proc/hello}? \\
+
+\underline{\hspace{\textwidth}} \\
+
+Was passiert bei \emph{cat /proc/hello}? \\
+
+\underline{\hspace{\textwidth}} \\
+
+Was passiert bei \emph{echo bye > /proc/hello}? \\
+
+\underline{\hspace{\textwidth}} \\
+
+Was steht anschliessend im Kernellog? \\
+
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+
+\subsubsection{Dateioperationen}
+
+Um den Inhalt der Datei zu definieren, müssen wir die \emph{hello\_read()} Funktion erweitern.
+\begin{lstlisting}
+static ssize_t hello_read(struct file* file, char __user* buf, size_t buf_size, loff_t* offset)
+{
+        // determine length of CONTENT (if buffer size < content length, then use buf_size instead)
+        size_t size = min(buf_size, strlen(CONTENT));
+
+        // if file offset is > 0, then return with 0 bytes read
+        if (*offset > 0) {
+                return 0;
+        }
+
+        // write CONTENT into userspace memory
+        if (copy_to_user(buf, CONTENT, size) != 0) {
+                return -EFAULT;
+        }
+
+        // increment offset
+        *offset += size;
+
+        printk(KERN_INFO "hello: read\n");
+        return size;
+}
+\end{lstlisting}
+
+Zuerst ermitteln wir die Anzahl Bytes, die wir in den Userspace schreiben. Danach überprüfen wir, mit welchen Offsets die
+Datei gelesen wird. Falls nicht der Anfang der Datei gelesen wird, melden wir dem Kernel das Dateiende (return 0). Würden
+wir das nicht machen, würde der Kernel die Datei unendlich weiterlesen, weil nie ein Dateiende kommt (Probieren Sie es aus!).
+Der Kern unser Funktion ist der \emph{copy\_to\_user()} Aufruf. Weil wir im Kernelspace arbeiten, können wir nicht direkt
+auf den Buffer \emph{buf} zugreifen. \emph{copy\_to\_user()} kopiert die Anzahl Bytes von unserem String 
+\emph{CONTENT} in den Buffer \emph{buf}. Danach inkrementieren wird die Offsetvariable und geben die Anzahl geschriebenen
+Bytes zurück. \\
+
+\emph{CONTENT} definieren wir als statischen String:
+\begin{lstlisting}
+#define CONTENT "hello reader!\n"
+\end{lstlisting}
+
+Kompilieren und laden Sie das Modul. Vergessen Sie nicht das alte Modul zuvor mit \emph{rmmod} wieder zu entfernen. \\
+
+Was passiert nun bei \emph{cat /proc/hello}? \\
+
+\underline{\hspace{\textwidth}} \\
+
+
+\subsubsection{Zusatzaufgabe (Optional)}
+
+Erweitern Sie den Code so, dass die Datei beschrieben werden kann und beim anschlissenden Lesen wird der neue
+Inhalt ausgegeben. Beispiel:
+\begin{lstlisting}
+$ cat /proc/hello
+hello! hello!
+$ echo bye > /proc/hello
+$ cat /proc/hello
+bye
+$
+\end{lstlisting}
+
+Verwenden Sie dazu analog zu \emph{copy\_to\_user()} die folgende Funktion, um den Buffer in \emph{hello\_write()} zu lesen:
+\begin{lstlisting}
+unsigned long copy_from_user(void *to, const void __user *from, unsigned long n)
+\end{lstlisting}
+Schreiben Sie den Bufferinhalt in eine globale Variable. Beispiel:
+\begin{lstlisting}
+static char content[200];
+\end{lstlisting}

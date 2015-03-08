@@ -1,0 +1,76 @@
+\section{Musterlösung Device Driver}
+
+Legen Sie für diese Übung einen neuen Ordner\emph{driver} unter dem \emph{workspace} an.
+Unter \emph{driver} soll für die nächsten zwei Übungen jeweils ein Ordner erstellt werden:
+\emph{char} und \emph{block}.
+
+\subsection{Char Driver}
+
+Schauen Sie sich nocheinmal das \emph{Char Driver} Beispiel in der Vorlesung an und vergleichen Sie es mit der
+\emph{/dev/zero} Gerätedatei. Was muss man im Beispiel von der Vorlesung ändern, um den gleichen Output wie die
+\emph{zero}-Gerätedatei zu erhalten? \\
+
+\underline{\textcolor{red}{Anstelle von "'a\textbackslash n"', muss "'0"' ausgegeben werden}\hspace{0.47\textwidth}} \\
+
+Überprüfen Sie Ihren Vorschlag indem Sie es implementieren. Bringen Sie im ersten Schritt den Treiber von der Vorlesung
+zum Laufen. Übernehmen Sie das Makefile aus den vorherigen Übungen. Kompilieren und verwenden können Sie das Modul über die bereits
+bekannten Befehle:
+\begin{lstlisting}
+$ make
+$ sudo insmod mychar.ko
+\end{lstlisting}
+
+Sobald Sie dies geschafft haben, nehmen Sie ihre Anpassungen vor.
+
+\subsection{Block Driver}
+
+In dieser Übung soll ein Block driver entwickelt werden. Das Listing im Abschnitt Block-Driver in der Vorlesung ist die Ausgangslage. Bringen Sie
+dieses zunächst zum Laufen.
+Kopieren Sie auch hier das Makefile ins Verzeichnis und ändern Sie in der Datei den Namen. Builden Sie das Modul
+mit \emph{make} und starten Sie es mit \emph{insmod}. Wie gross ist die virtuelle Disk? Überprüfen Sie das mit \emph{cfdisk}.
+
+\begin{lstlisting}
+$ make
+$ sudo insmod memdrive.ko
+$ sudo cfdisk /dev/memdrive
+\end{lstlisting}
+
+Vergrösseren Sie nun die virtuelle Disk auf 5 MB. Wie gross müssen Sie \emph{nsectors} wählen?
+Schreiben Sie die Berechnung und das Ergebnis auf. \\
+
+
+\underline{\textcolor{red}{5 MB = 5242880 Bytes => nsectors = 5242880 Bytes / 512 Bytes (Block Size) = 10240}\hspace{0.1\textwidth}} \\
+
+Partitionieren Sie nun die Disk über \emph{cfdisk}. Es soll nur eine Partitionen erstellt und die kompletten
+5 MB Speicher verwendet werden. Schreiben (\emph{write}) und Beenden Sie anschliessend (\emph{quit}). Es exsitiert nun eine
+neue Datei mit dem Namen \emph{/dev/memdrive0}. Formatieren Sie die Partition mit \emph{ext2}:
+\begin{lstlisting}
+$ sudo mkfs.ext2 /dev/memdrive0
+\end{lstlisting}
+
+Danach können Sie die Partition mounten:
+\begin{lstlisting}
+$ sudo mount /dev/memdrive0 /mnt
+\end{lstlisting}
+
+Erstellen Sie nun einige Dateien und Ordner unter \emph{/mnt}. Unmounten und mounten Sie das Verzeichnis anschlissend:
+\begin{lstlisting}
+$ sudo umount /mnt
+$ sudo mount /dev/memdrive0 /mnt
+\end{lstlisting}
+
+Was passiert mit den Dateien und Ordnern?
+
+\underline{\textcolor{red}{Die Dateien und Ordner sind immer noch vorhanden. (Speicherfreigabe erst bei \emph{memdrive\_release()})}} \\
+
+Machen Sie dasselbe nochmals, aber starten Sie auch den Treiber neu:
+\begin{lstlisting}
+$ sudo umount /mnt
+$ sudo rmmod memdrive
+$ sudo insmod memdrive.ko
+$ sudo mount /dev/memdrive0 /mnt
+\end{lstlisting}
+
+Was passiert jetzt?
+
+\underline{\textcolor{red}{Die Datei \emph{/dev/memdrive0} exisiert nicht mehr, weil der Speicher freigegeben wurde.}\hspace{0.2\textwidth}} \\

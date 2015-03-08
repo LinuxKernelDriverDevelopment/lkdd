@@ -1,0 +1,158 @@
+\section{Musterlösung System Call Interface}
+
+\subsection{System Call erstellen}
+
+In dieser Übung wollen wir nun einen eignen System Call entwickeln. Erstellen Sie einen neuen Ordner im 
+Workspace mit dem Namen \emph{syscall}. Entpacken Sie den Kernel wie bereits in der \emph{Fallstudie Bootprozess}
+und legen Sie diesen unter \emph{workspace/syscall/linux-source} ab. \\
+
+Als nächstes fügen wir unseren System Call in der System Call Table ein. Editieren Sie hierzu die Datei
+\emph{arch/x86/kernel/syscall\_table\_32.S} wie im Listing \ref{syscall_table2}, indem Sie \emph{.long sys\_hello}
+hinzufügen. 
+
+\begin{lstlisting}[label=syscall_table2,caption=arch/x86/kernel/syscall\_table\_32.S]
+        // ..
+
+        .long sys_sendmmsg              /* 345 */
+        .long sys_setns
+        .long sys_process_vm_readv
+        .long sys_process_vm_writev
+
+        // hello world system call (nr. 349)
+        .long sys_hello
+
+        // ..
+\end{lstlisting} \hfill
+
+Jeder System Call hat eine eigene Nummer, die beim Aufruf über das \emph{\%eax} Register übertragen wird. Diese Nummer
+teilen Sie dem Kernel in der nächsten Datei mit (Listing \ref{syscall_nr2}). Auch die Anzahl der System Calls \emph{NR\_syscalls}
+muss erhöht werden.
+
+\begin{lstlisting}[label=syscall_nr2,caption=arch/x86/include/asm/unistd\_32.S]
+// ..
+#define __NR_process_vm_readv   347
+#define __NR_process_vm_writev  348
+#define __NR_hello              349
+
+#ifdef __KERNEL__
+
+#define NR_syscalls 350
+
+// ..
+\end{lstlisting} \hfill
+
+
+Der Funktionsprototyp wird unter \emph{include/linux/syscall.h} definiert.
+\begin{lstlisting}[caption=include/linux/syscall.h]
+// ..
+asmlinkage long sys_process_vm_writev(pid_t pid,
+                                      const struct iovec __user *lvec,
+                                      unsigned long liovcnt,
+                                      const struct iovec __user *rvec,
+                                      unsigned long riovcnt,
+                                      unsigned long flags);
+asmlinkage long sys_hello(void);
+
+// ..
+\end{lstlisting} \hfill
+
+Nun müssen wir eine neue Datei erstellen, um die Funktion zu implementieren. Erstellen Sie folgende Datei: \emph{kernel/hello.c}
+und kopieren Sie den Inhalt von Listing \ref{sys_hello2} hinein.
+
+\begin{lstlisting}[label=sys_hello2,caption=kernel/hello.c]
+#include <linux/kernel.h>
+#include <linux/syscalls.h>
+
+asmlinkage long sys_hello(void)
+{
+        printk(KERN_INFO "Hello system call!\n");
+        return 0;
+}
+\end{lstlisting}
+
+Damit die neue Datei in den Kernel kompiliert wird, müssen wird diese im Makefile angeben (Listing \ref{sys_hello_make2}).
+Dafür muss nur \emph{hello.o} am Ende der \emph{obj-y} Variable angegeben werden.
+
+\begin{lstlisting}[label=sys_hello_make2,caption=kernel/Makefile]
+#
+# Makefile for the linux kernel.
+#
+
+obj-y     = sched.o fork.o exec_domain.o panic.o printk.o \
+            cpu.o exit.o itimer.o time.o softirq.o resource.o \
+            sysctl.o sysctl_binary.o capability.o ptrace.o timer.o user.o \
+            signal.o sys.o kmod.o workqueue.o pid.o \
+            rcupdate.o extable.o params.o posix-timers.o \
+            kthread.o wait.o kfifo.o sys_ni.o posix-cpu-timers.o mutex.o \
+            hrtimer.o rwsem.o nsproxy.o srcu.o semaphore.o \
+            notifier.o ksysfs.o sched_clock.o cred.o \
+            async.o range.o hello.o
+
+# ..
+\end{lstlisting}
+
+Der System Call ist nun implementiert. Um diesen zu testen, müssen wir nachfolgenden den Kernel kompilieren,
+installieren und neustarten.
+
+\begin{lstlisting}
+$ make
+$ sudo make install
+\end{lstlisting}
+
+\subsection{System Call aufrufen}
+
+Im zweiten Schritt wird der System Call durch ein Userspace Programm aufgerufen. Legen Sie einen neuen Ordner \emph{syscall\_test} unter
+\emph{workspace/syscall} an. Erstellen Sie eine neue Datei \emph{main.c}. \\
+
+Wie wir in der Vorlesung gesehen haben, wird ein System Call per Interrupt ausgelöst. Anstatt den Aufruf in Assembly zu schreiben, bietet
+die \emph{libc} die Funktion \emph{syscall()} an. Kopieren Sie den Code aus Listing \ref{syscall_test2} in die Maindatei.
+
+\begin{lstlisting}[label=syscall_test2,caption=workspace/syscall/main.c]
+#include <stdio.h>
+#include <sys/syscall.h>
+
+#define SYSCALL_HELLO 349
+
+int main(int argc, char *argv[])
+{
+        int ret;
+
+        printf("testing system call...\n");
+        ret = syscall(SYSCALL_HELLO);
+        printf("executed with return value %i\n", ret);
+
+        return 0;
+}
+\end{lstlisting} \hfill
+
+Um das Programm zu kompilieren, legen wir noch ein Makefile an:
+\begin{lstlisting}[caption=workspace/syscall/Makefile]
+all:
+        gcc -osyscall_test main.c
+
+clean:
+        rm -f *.o
+\end{lstlisting}\hfill
+
+Kompilieren Sie nun das Programm und führen Sie es aus.
+\begin{lstlisting}
+$ cd ~/workspace/syscall/syscall_test
+$ make
+$ ./syscall_test
+\end{lstlisting} \hfill
+
+Was ist die Ausgabe? \\
+
+\underline{\smash{\textcolor{red}{testing system call...}}\hspace{0.54\textwidth}} \\
+\underline{\smash{\textcolor{red}{executed with return value 0}}\hspace{0.45\textwidth}} \\
+
+Geben Sie die Ausgabe von \emph{dmesg | tail} an:
+
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\hspace{0.5\textwidth}} \newline
+[00000.000000] \underline{\smash{\textcolor{red}{Hello system call!}}\hspace{0.31\textwidth}} \newline
+
