@@ -114,7 +114,7 @@ Block devices:
 ..
 \end{lstlisting} \hfill
 
-Um eine Gerätedatei mit dem Treiber \emph{mem} zu erstellen, kann mit dem Befehl \emph{mknod} erstellet werden (Listing \ref{mknod}).
+Um eine Gerätedatei mit dem Treiber \emph{mem} zu erstellen, kann der Befehl \emph{mknod} verwendet werden (Listing \ref{mknod}).
 Dabei ist \emph{zero} der Dateiname, \emph{c} besagt, dass es eine Char-Datei sein soll und \emph{1} bzw. \emph{5} stehen für die Major- und Minornummer.
 Die Datei verhält sich anschliessend gleich wie \emph{/dev/zero}. Das liegt daran, dass beide Dateien mit den gleichen Major- und Minornummer erstell wurden.
 \begin{lstlisting}[label=mknod,caption=mknod]
