@@ -377,7 +377,7 @@ struct gendisk {
 \end{lstlisting} \hfill
 
 Die Speicherplatzreservierung findet über die Funktion \emph{alloc\_disk()} statt. Ihr übergibt man auch die gewünschte Anzahl an Minornummern. Für Blockgeräte bedeuten die Minornummern
-die Anzahl an möglichen Partitionen. Um dem Kernel die neue Disk bekannt zu machen, reicht ein Aufruf von \emph{add\_disk()} und mit \emph{del\_gensik()} kann diese wieder entfernt werden.
+die Anzahl an möglichen Partitionen. Um dem Kernel die neue Disk bekannt zu machen, reicht ein Aufruf von \emph{add\_disk()} und mit \emph{del\_gendisk()} kann diese wieder entfernt werden.
 \begin{lstlisting}[caption=Gendisk Funktionen]
 struct gendisk *alloc_disk(int minors)
 void del_gendisk(struct gendisk *gd);
